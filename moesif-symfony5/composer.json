@@ -1,0 +1,16 @@
+{
+    "name": "moesif/moesif-bundle",
+    "type": "symfony-bundle",
+    "license": "proprietary",
+    "description": "Bundle for Moesif Symphony integration",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Moesif\\MoesifBundle\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=7.2.5",
+        "symfony/framework-bundle": "^5.0"
+    }
+}

@@ -1,0 +1,35 @@
+parameters:
+  # Your parameters here
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Moesif\MoesifBundle\:
+    resource: '../../*'
+    exclude: '../{DependencyInjection,Migrations,Tests,Kernel.php}'
+
+  Moesif\MoesifBundle\EventSubscriber\:
+    resource: '../../EventSubscriber/*'
+    tags: ['kernel.event_subscriber']
+
+  # Define your services and any specific dependencies
+  Moesif\MoesifBundle\Service\MoesifApiService:
+    arguments:
+      $sendProducer: '@Moesif\MoesifBundle\Producer\SendTaskProducer'
+
+  Moesif\MoesifBundle\Consumer\SendCurlTaskConsumer:
+    arguments:
+      $appId: '%moesif.moesif_application_id%'
+      $logger: '@logger'
+      $options: '%moesif.options%'
+      $debug: '%moesif.debug%'
+
+  Moesif\MoesifBundle\Producer\SendTaskProducer:
+    arguments:
+      $appId: '%moesif.moesif_application_id%'
+      $logger: '@logger'
+      $options: '%moesif.options%'
+      $debug: '%moesif.debug%'
