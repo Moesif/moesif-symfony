@@ -18,11 +18,6 @@ class SendTaskProducer {
     protected $debug;
 
     /**
-     * Logger instance.
-     */
-    protected LoggerInterface $logger;
-
-    /**
      * @var array a queue to hold messages in memory before flushing in batches
      */
     private $queue = [];
@@ -38,12 +33,19 @@ class SendTaskProducer {
      */
     protected $maxQueueSize = 5;
 
+    /**
+     * @var LoggerInterface
+     * The logger to use for debugging and error logging
+     */
+    private $logger;
+
     public function __construct(string $appId, LoggerInterface $logger, array $options = [], bool $debug = false) {
         $this->appId = $appId;
         $this->consumer = new SendCurlTaskConsumer($this->appId, $logger, $options, $debug);
         $this->maxQueueSize = $options['max_queue_size'] ?? $this->maxQueueSize;
         $this->debug = $debug;
         $this->logger = $logger;
+        $this->logger->info("SendTaskProducer instantiated.");
     }
 
     public function __destruct() {
@@ -106,6 +108,7 @@ class SendTaskProducer {
     }
 
     public function track(array $data) {
+        $this->logger->info("Enqueuing Moesif event.", $data);
         $this->enqueue($data);
     }
 }

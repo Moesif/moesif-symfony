@@ -23,7 +23,7 @@ class SendCurlTaskConsumer {
     public function __construct(string $appId, LoggerInterface $logger, array $options = [], bool $debug = false) {
         $this->appId = $appId;
         $this->host = $options['host'] ?? 'api.moesif.net';
-        $this->endpoint = $options['endpoint'] ?? '/v1/events';
+        $this->endpoint = $options['endpoint'] ?? '/v1/events/batch';
         $this->usersEndpoint = $options['users_endpoint'] ?? '/v1/users';
         $this->usersBatchEndpoint = $options['users_batch_endpoint'] ?? '/v1/users/batch';
         $this->companyEndpoint = $options['company_endpoint'] ?? '/v1/companies';
@@ -54,14 +54,14 @@ class SendCurlTaskConsumer {
             return true;
         }
 
-        $data = json_encode($batch);
+        $data = $batch; //json_encode($batch);
         $url = $this->protocol . '://' . $this->host . $this->endpoint;
 
         return $this->fork ? $this->_executeForked($url, $data) : $this->_executeCurl($url, $data);
     }
 
     public function updateUser(array $userData): bool {
-        $data = json_encode($userData);
+        $data = $batch; //json_encode($userData);
         $url = $this->protocol . '://' . $this->host . $this->usersEndpoint;
         
         return $this->fork ? $this->_executeForked($url, $data) : $this->_executeCurl($url, $data);
@@ -89,6 +89,11 @@ class SendCurlTaskConsumer {
     }
 
     protected function _executeCurl(string $url, string $data): bool {
+        
+        if ($this->debug) {
+            $this->logger->error('Moesif cURL data: ' . $data);
+        }
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -101,9 +106,22 @@ class SendCurlTaskConsumer {
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->connectTimeout);
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
 
+        $curlCommand = 'curl -X POST -H "Content-Type: application/json" -H "X-Moesif-Application-Id: ' . $this->appId . '" -d \'' . addslashes($data) . '\' \'' . $url . '\'';
+        if ($this->debug) {
+            $this->logger->info('Moesif cURL command: ' . $curlCommand);
+        }
+
         $result = curl_exec($ch);
 
+        if ($this->debug) {
+            $this->logger->error('Moesif cURL result: ' . $result);
+        }
+
         if (curl_errno($ch)) {
+            $error = curl_error($ch);
+            if ($this->debug) {
+                $this->logger->error('Moesif cURL consumer error: ' . $error);
+            }
             curl_close($ch);
             return false;
         }
@@ -113,8 +131,8 @@ class SendCurlTaskConsumer {
     }
 
     protected function _executeForked(string $url, string $data): bool {
-        $escapedData = escapeshellarg($data);
-        $command = "curl -X POST -H 'Content-Type: application/json' -H 'X-Moesif-Application-Id: {$this->appId}' -d {$escapedData} '{$url}' > /dev/null 2>&1 &";
+        //$escapedData = escapeshellarg($data);
+        $command = "curl -X POST -H 'Content-Type: application/json' -H 'X-Moesif-Application-Id: {$this->appId}' -d {$data} '{$url}' > /dev/null 2>&1 &";
 
         exec($command, $output, $returnVar);
         return $returnVar === 0;

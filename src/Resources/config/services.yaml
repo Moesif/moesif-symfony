@@ -19,6 +19,7 @@ services:
   Moesif\MoesifBundle\Service\MoesifApiService:
     arguments:
       $sendProducer: '@Moesif\MoesifBundle\Producer\SendTaskProducer'
+      $logger: '@logger'
 
   Moesif\MoesifBundle\Consumer\SendCurlTaskConsumer:
     arguments:

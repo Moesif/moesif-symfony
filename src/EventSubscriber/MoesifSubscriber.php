@@ -58,7 +58,7 @@ class MoesifSubscriber implements EventSubscriberInterface
             'uri' => $request->getUri(),
             'ip_address' => $this->getIp($request),
             'headers' => $this->maskRequestHeaders($request->headers->all()),
-            'body' => $this->maskRequestBody($request->getContent()), // Assuming JSON content
+            'body' => json_decode($this->maskRequestBody($request->getContent())), // Assuming JSON content
             'transfer_encoding' => 'json',
         ];
 
@@ -66,7 +66,7 @@ class MoesifSubscriber implements EventSubscriberInterface
             'time' => $endTime->format('Y-m-d\TH:i:s.uP'),
             'status' => $response->getStatusCode(),
             'headers' => $this->maskResponseHeaders($response->headers->all()),
-            'body' => $this->maskResponseBody($response->getContent()), // Assuming JSON content
+            'body' => json_decode($this->maskResponseBody($response->getContent())), // Assuming JSON content
             'transfer_encoding' => 'json',
         ];
 
