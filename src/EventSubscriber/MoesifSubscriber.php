@@ -70,11 +70,16 @@ class MoesifSubscriber implements EventSubscriberInterface
             'transfer_encoding' => 'json',
         ];
 
-        return [
+        $eventModel = [
             'request' => $requestData,
             'response' => $responseData,
-            // Include other necessary fields according to Moesif's API requirements
+            'user_id' => $this->identifyUserId($request, $response),
+            'session_token' => $this->identifySessionToken($request, $response),
+            'company_id' => $this->identifyCompanyId($request, $response),
+            'metadata' => $this->getMetadata($request, $response),
         ];
+
+        return $eventModel;
     }
 
     private function getIp(Request $request): ?string
@@ -91,27 +96,48 @@ class MoesifSubscriber implements EventSubscriberInterface
         return $request->getClientIp();
     }
 
+    private function identifyUserId(Request $request, $response): ?string
+    {
+        return null;
+    }
+
+    private function identifyCompanyId(Request $request, $response): ?string
+    {
+        return null;
+    }
+
+    private function identifySessionToken(Request $request, $response): ?string
+    {
+        return null;
+    }
+
+    private function getMetadata(Request $request, $response): ?array
+    {
+        return null;
+    }
+
+    private function skip(Request $request, $response): bool
+    {
+        return false;
+    }
+
     private function maskRequestHeaders(array $headers): array
     {
-        // Implement any logic needed to mask sensitive header information
         return $headers;
     }
 
     private function maskResponseHeaders(array $headers): array
     {
-        // Implement any logic needed to mask sensitive header information
         return $headers;
     }
 
     private function maskRequestBody(string $body): ?string
     {
-        // Optionally, implement logic to modify or mask sensitive request body content
         return $body;
     }
 
     private function maskResponseBody(string $body): ?string
     {
-        // Optionally, implement logic to modify or mask sensitive response body content
         return $body;
     }
 }
