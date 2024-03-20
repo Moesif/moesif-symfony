@@ -37,13 +37,13 @@ class SendCurlTaskConsumer {
 
         if ($this->fork && !function_exists('exec')) {
             if ($this->debug) {
-                $this->logger->error('The "exec" function must be enabled to use the cURL consumer in "fork" mode.');
+                // $this->logger->error('The "exec" function must be enabled to use the cURL consumer in "fork" mode.');
             }
             throw new Exception('The "exec" function must be enabled to use the cURL consumer in "fork" mode.');
         }
         if (!$this->fork && !function_exists('curl_init')) {
             if ($this->debug) {
-                $this->logger->error('The cURL PHP extension is required to use the cURL consumer with fork = false.');
+                // $this->logger->error('The cURL PHP extension is required to use the cURL consumer with fork = false.');
             }
             throw new Exception('The cURL PHP extension is required to use the cURL consumer with fork = false.');
         }
@@ -54,7 +54,7 @@ class SendCurlTaskConsumer {
             return true;
         }
 
-        $data = $batch; //json_encode($batch);
+        $data = json_encode($batch);
         $url = $this->protocol . '://' . $this->host . $this->endpoint;
 
         return $this->fork ? $this->_executeForked($url, $data) : $this->_executeCurl($url, $data);
@@ -91,7 +91,7 @@ class SendCurlTaskConsumer {
     protected function _executeCurl(string $url, string $data): bool {
         
         if ($this->debug) {
-            $this->logger->error('Moesif cURL data: ' . $data);
+            // $this->logger->error('Moesif cURL data: ' . $data);
         }
 
         $ch = curl_init();

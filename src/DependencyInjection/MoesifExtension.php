@@ -20,7 +20,6 @@ class MoesifExtension extends Extension
     {
         // Load service definitions
         $configDir = __DIR__.'/../Resources/config';
-        error_log("Resolved config directory: " . $configDir);
         $loader = new YamlFileLoader($container, new FileLocator($configDir));
         $loader->load('services.yaml');
 
