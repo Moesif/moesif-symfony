@@ -45,7 +45,7 @@ class SendTaskProducer {
         $this->maxQueueSize = $options['max_queue_size'] ?? $this->maxQueueSize;
         $this->debug = $debug;
         $this->logger = $logger;
-        $this->logger->info("SendTaskProducer instantiated.");
+        // $this->logger->info("SendTaskProducer instantiated.");
     }
 
     public function __destruct() {
@@ -107,8 +107,16 @@ class SendTaskProducer {
         return $this->consumer->updateCompaniesBatch($companiesBatchData);
     }
 
+    public function updateSubscription(array $subscriptionData) {
+        return $this->consumer->updateSubscription($subscriptionData);
+    }
+
+    public function updateSubscriptionsBatch(array $subscriptionsBatchData) {
+        return $this->consumer->updateSubscriptionsBatch($subscriptionsBatchData);
+    }
+
     public function track(array $data) {
-        $this->logger->info("Enqueuing Moesif event.", $data);
+        // $this->logger->info("Enqueuing Moesif event.", $data);
         $this->enqueue($data);
     }
 }

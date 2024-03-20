@@ -69,7 +69,7 @@ abstract class SendTaskConsumer {
      */
     protected function log(string $message): void {
         if ($this->debug) {
-            $this->logger->error($message);
+            // $this->logger->error($message);
         }
     }
 
@@ -112,4 +112,20 @@ abstract class SendTaskConsumer {
      * @return bool Success or failure.
      */
     abstract public function updateCompaniesBatch(array $companiesBatchData): bool;
+
+    /**
+     * Update subscription data.
+     * 
+     * @param array $subscriptionData Subscription data to update.
+     * @return bool Success or failure.
+     */
+    abstract public function updateSubscriptions(array $subscriptionData): bool;
+
+    /**
+     * Update subscriptions in batch.
+     * 
+     * @param array $subscriptionsBatchData Batch of subscription data to update.
+     * @return bool Success or failure.
+     */
+    abstract public function updateSubscriptionsBatch(array $subscriptionsBatchData): bool;
 }

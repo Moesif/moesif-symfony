@@ -12,6 +12,8 @@ class SendCurlTaskConsumer {
     protected string $usersBatchEndpoint;
     protected string $companyEndpoint;
     protected string $companiesBatchEndpoint;
+    protected string $subscriptionEndpoint;
+    protected string $subscriptionsBatchEndpoint;
     protected int $connectTimeout;
     protected int $timeout;
     protected string $protocol;
@@ -28,6 +30,8 @@ class SendCurlTaskConsumer {
         $this->usersBatchEndpoint = $options['users_batch_endpoint'] ?? '/v1/users/batch';
         $this->companyEndpoint = $options['company_endpoint'] ?? '/v1/companies';
         $this->companiesBatchEndpoint = $options['companies_batch_endpoint'] ?? '/v1/companies/batch';
+        $this->subscriptionEndpoint = $options['subscription_endpoint'] ?? '/v1/subscriptions';
+        $this->subscriptionsBatchEndpoint = $options['subscriptions_batch_endpoint'] ?? '/v1/subscriptions/batch';
         $this->connectTimeout = $options['connect_timeout'] ?? 5;
         $this->timeout = $options['timeout'] ?? 30;
         $this->protocol = $options['use_ssl'] ?? true ? 'https' : 'http';
@@ -84,6 +88,20 @@ class SendCurlTaskConsumer {
     public function updateCompaniesBatch(array $companiesBatchData): bool {
         $data = json_encode($companiesBatchData);
         $url = $this->protocol . '://' . $this->host . $this->companiesBatchEndpoint;
+
+        return $this->fork ? $this->_executeForked($url, $data) : $this->_executeCurl($url, $data);
+    }
+
+    public function updateSubscription(array $subscriptionData): bool {
+        $data = json_encode($subscriptionData);
+        $url = $this->protocol . '://' . $this->host . $this->subscriptionEndpoint;
+
+        return $this->fork ? $this->_executeForked($url, $data) : $this->_executeCurl($url, $data);
+    }
+
+    public function updateSubscriptionsBatch(array $subscriptionsBatchData): bool {
+        $data = json_encode($subscriptionsBatchData);
+        $url = $this->protocol . '://' . $this->host . $this->subscriptionsBatchEndpoint;
 
         return $this->fork ? $this->_executeForked($url, $data) : $this->_executeCurl($url, $data);
     }
