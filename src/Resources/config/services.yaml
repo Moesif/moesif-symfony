@@ -13,7 +13,9 @@ services:
 
   Moesif\MoesifBundle\EventSubscriber\:
     resource: '../../EventSubscriber/*'
-    tags: ['kernel.event_subscriber']
+    tags:
+      - { name: 'kernel.event_subscriber' }
+      - { name: 'moesif.event_subscriber' }
 
   # Define your services and any specific dependencies
   Moesif\MoesifBundle\Service\MoesifApiService:

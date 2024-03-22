@@ -65,7 +65,7 @@ class SendCurlTaskConsumer {
     }
 
     public function updateUser(array $userData): bool {
-        $data = $batch; //json_encode($userData);
+        $data = json_encode($userData);
         $url = $this->protocol . '://' . $this->host . $this->usersEndpoint;
         
         return $this->fork ? $this->_executeForked($url, $data) : $this->_executeCurl($url, $data);

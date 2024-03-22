@@ -4,14 +4,16 @@ namespace Moesif\MoesifBundle\EventSubscriber;
 
 use DateTime;
 use DateTimeZone;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface as SymfonyEventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Moesif\MoesifBundle\Service\MoesifApiService;
+use Moesif\MoesifBundle\Interfaces\EventSubscriberInterface as MoesifEventSubscriberInterface;
 
-class MoesifSubscriber implements EventSubscriberInterface
+class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSubscriberInterface
 {
     private MoesifApiService $moesifApiService;
 
@@ -44,7 +46,7 @@ class MoesifSubscriber implements EventSubscriberInterface
         }
     }
 
-    private function prepareData(Request $request, $response): array
+    private function prepareData(Request $request, Response $response): array
     {
         $startTime = new DateTime();
         $startTime->setTimezone(new DateTimeZone("UTC"));
@@ -74,6 +76,7 @@ class MoesifSubscriber implements EventSubscriberInterface
             'request' => $requestData,
             'response' => $responseData,
             'user_id' => $this->identifyUserId($request, $response),
+            'company_id' => $this->identifyCompanyId($request, $response),
             'session_token' => $this->identifySessionToken($request, $response),
             'company_id' => $this->identifyCompanyId($request, $response),
             'metadata' => $this->getMetadata($request, $response),
@@ -96,47 +99,47 @@ class MoesifSubscriber implements EventSubscriberInterface
         return $request->getClientIp();
     }
 
-    private function identifyUserId(Request $request, $response): ?string
+    public function identifyUserId(Request $request, Response $response): ?string
     {
         return null;
     }
 
-    private function identifyCompanyId(Request $request, $response): ?string
+    public function identifyCompanyId(Request $request, Response $response): ?string
     {
         return null;
     }
 
-    private function identifySessionToken(Request $request, $response): ?string
+    public function identifySessionToken(Request $request, Response $response): ?string
     {
         return null;
     }
 
-    private function getMetadata(Request $request, $response): ?array
+    public function getMetadata(Request $request, Response $response): ?array
     {
         return null;
     }
 
-    private function skip(Request $request, $response): bool
+    public function skip(Request $request, Response $response): bool
     {
         return false;
     }
 
-    private function maskRequestHeaders(array $headers): array
+    public function maskRequestHeaders(array $headers): array
     {
         return $headers;
     }
 
-    private function maskResponseHeaders(array $headers): array
+    public function maskResponseHeaders(array $headers): array
     {
         return $headers;
     }
 
-    private function maskRequestBody(string $body): ?string
+    public function maskRequestBody(string $body): ?string
     {
         return $body;
     }
 
-    private function maskResponseBody(string $body): ?string
+    public function maskResponseBody(string $body): ?string
     {
         return $body;
     }
