@@ -13,12 +13,17 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Moesif\MoesifBundle\Service\MoesifApiService;
 use Moesif\MoesifBundle\Interfaces\EventSubscriberInterface as MoesifEventSubscriberInterface;
 
+use Psr\Log\LoggerInterface;
+
 class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSubscriberInterface
 {
     private MoesifApiService $moesifApiService;
+    private LoggerInterface $logger;
 
-    public function __construct(MoesifApiService $moesifApiService)
+    public function __construct(MoesifApiService $moesifApiService, LoggerInterface $logger = null)
     {
+
+      $this->logger = $logger;
         $this->moesifApiService = $moesifApiService;
     }
 
@@ -32,6 +37,8 @@ class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSu
 
     public function onKernelRequest(RequestEvent $event): void
     {
+
+      $this->logger->info(' hello in moesif subscriber on request ');
         // Optional: Perform actions before the request is handled, such as initializing logging or tracking
     }
 
@@ -50,7 +57,7 @@ class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSu
     {
         $startTime = new DateTime();
         $startTime->setTimezone(new DateTimeZone("UTC"));
-        
+
         $endTime = new DateTime();
         $endTime->setTimezone(new DateTimeZone("UTC"));
 

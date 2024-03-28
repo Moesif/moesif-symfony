@@ -67,7 +67,7 @@ class SendCurlTaskConsumer {
     public function updateUser(array $userData): bool {
         $data = json_encode($userData);
         $url = $this->protocol . '://' . $this->host . $this->usersEndpoint;
-        
+
         return $this->fork ? $this->_executeForked($url, $data) : $this->_executeCurl($url, $data);
     }
 
@@ -107,7 +107,7 @@ class SendCurlTaskConsumer {
     }
 
     protected function _executeCurl(string $url, string $data): bool {
-        
+
         if ($this->debug) {
             // $this->logger->error('Moesif cURL data: ' . $data);
         }
