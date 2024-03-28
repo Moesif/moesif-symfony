@@ -37,6 +37,11 @@ class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSu
 
     public function onKernelRequest(RequestEvent $event): void
     {
+      $startTime = new DateTime();
+      $startTime->setTimezone(new DateTimeZone("UTC"));
+
+      $request = $event->getRequest();
+      $request->attributes->set('mo_start_time', $startTime);
 
       $this->logger->info(' hello in moesif subscriber on request ');
         // Optional: Perform actions before the request is handled, such as initializing logging or tracking
@@ -55,8 +60,7 @@ class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSu
 
     private function prepareData(Request $request, Response $response): array
     {
-        $startTime = new DateTime();
-        $startTime->setTimezone(new DateTimeZone("UTC"));
+        $startTime = $request->attributes->get('mo_start_time');
 
         $endTime = new DateTime();
         $endTime->setTimezone(new DateTimeZone("UTC"));
