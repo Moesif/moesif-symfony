@@ -108,10 +108,6 @@ class SendCurlTaskConsumer {
 
     protected function _executeCurl(string $url, string $data): bool {
 
-        if ($this->debug) {
-            // $this->logger->error('Moesif cURL data: ' . $data);
-        }
-
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -126,13 +122,13 @@ class SendCurlTaskConsumer {
 
         $curlCommand = 'curl -X POST -H "Content-Type: application/json" -H "X-Moesif-Application-Id: ' . $this->appId . '" -d \'' . addslashes($data) . '\' \'' . $url . '\'';
         if ($this->debug) {
-            $this->logger->info('Moesif cURL command: ' . $curlCommand);
+            $this->logger->debug('Moesif cURL command: ' . $curlCommand);
         }
 
         $result = curl_exec($ch);
 
         if ($this->debug) {
-            $this->logger->error('Moesif cURL result: ' . $result);
+            $this->logger->debug('Moesif cURL result: ' . $result);
         }
 
         if (curl_errno($ch)) {
