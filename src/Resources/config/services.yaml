@@ -36,3 +36,5 @@ services:
       $logger: '@logger'
       $options: '%moesif.options%'
       $debug: '%moesif.debug%'
+
+  Moesif\MoesifBundle\Interfaces\MoesifHooksInterface: '@moesif.user_hooks'

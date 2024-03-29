@@ -11,19 +11,22 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Moesif\MoesifBundle\Service\MoesifApiService;
-use Moesif\MoesifBundle\Interfaces\EventSubscriberInterface as MoesifEventSubscriberInterface;
+use Moesif\MoesifBundle\Interfaces\MoesifHooksInterface;
 
 use Psr\Log\LoggerInterface;
 
-class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSubscriberInterface
+class MoesifSubscriber implements SymfonyEventSubscriberInterface
 {
     private MoesifApiService $moesifApiService;
     private LoggerInterface $logger;
+    private $options;
 
-    public function __construct(MoesifApiService $moesifApiService, LoggerInterface $logger = null)
+    private $configHooks;
+
+    public function __construct(MoesifApiService $moesifApiService, MoesifHooksInterface $configHooks, LoggerInterface $logger = null)
     {
-
-      $this->logger = $logger;
+        $this->configHooks = $configHooks;
+        $this->logger = $logger;
         $this->moesifApiService = $moesifApiService;
     }
 
@@ -37,14 +40,11 @@ class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSu
 
     public function onKernelRequest(RequestEvent $event): void
     {
-      $startTime = new DateTime();
-      $startTime->setTimezone(new DateTimeZone("UTC"));
+        $startTime = new DateTime();
+        $startTime->setTimezone(new DateTimeZone("UTC"));
 
-      $request = $event->getRequest();
-      $request->attributes->set('mo_start_time', $startTime);
-
-      $this->logger->info(' hello in moesif subscriber on request ');
-        // Optional: Perform actions before the request is handled, such as initializing logging or tracking
+        $request = $event->getRequest();
+        $request->attributes->set('mo_start_time', $startTime);
     }
 
     public function onKernelResponse(ResponseEvent $event): void
@@ -89,7 +89,6 @@ class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSu
             'user_id' => $this->identifyUserId($request, $response),
             'company_id' => $this->identifyCompanyId($request, $response),
             'session_token' => $this->identifySessionToken($request, $response),
-            'company_id' => $this->identifyCompanyId($request, $response),
             'metadata' => $this->getMetadata($request, $response),
         ];
 
