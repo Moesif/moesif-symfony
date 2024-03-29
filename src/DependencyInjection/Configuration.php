@@ -22,7 +22,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultFalse()
                 ->end()
                 ->scalarNode('user_hooks_class')
-                    ->defaultValue(null)
+                    ->defaultValue('Moesif\MoesifBundle\Interfaces\MoesifDefaultHooks')
                 ->end()
                 ->arrayNode('options')
                     ->addDefaultsIfNotSet()

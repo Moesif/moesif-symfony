@@ -39,7 +39,7 @@ class MoesifExtension extends Extension
           $userMoesifConfigClass = $config['user_hooks_class'];
           $definition = new Definition($userMoesifConfigClass);
           $container->setDefinition('moesif.user_hooks', $definition);
-      }
+        }
 
         if (isset($config['debug'])) {
             $container->setParameter('moesif.debug', $config['debug']);
