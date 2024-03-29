@@ -11,14 +11,22 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Moesif\MoesifBundle\Service\MoesifApiService;
-use Moesif\MoesifBundle\Interfaces\EventSubscriberInterface as MoesifEventSubscriberInterface;
+use Moesif\MoesifBundle\Interfaces\MoesifHooksInterface;
 
-class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSubscriberInterface
+use Psr\Log\LoggerInterface;
+
+class MoesifSubscriber implements SymfonyEventSubscriberInterface
 {
     private MoesifApiService $moesifApiService;
+    private LoggerInterface $logger;
+    private $options;
 
-    public function __construct(MoesifApiService $moesifApiService)
+    private $configHooks;
+
+    public function __construct(MoesifApiService $moesifApiService, MoesifHooksInterface $configHooks, LoggerInterface $logger = null)
     {
+        $this->configHooks = $configHooks;
+        $this->logger = $logger;
         $this->moesifApiService = $moesifApiService;
     }
 
@@ -32,7 +40,11 @@ class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSu
 
     public function onKernelRequest(RequestEvent $event): void
     {
-        // Optional: Perform actions before the request is handled, such as initializing logging or tracking
+        $startTime = new DateTime();
+        $startTime->setTimezone(new DateTimeZone("UTC"));
+
+        $request = $event->getRequest();
+        $request->attributes->set('mo_start_time', $startTime);
     }
 
     public function onKernelResponse(ResponseEvent $event): void
@@ -48,9 +60,8 @@ class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSu
 
     private function prepareData(Request $request, Response $response): array
     {
-        $startTime = new DateTime();
-        $startTime->setTimezone(new DateTimeZone("UTC"));
-        
+        $startTime = $request->attributes->get('mo_start_time');
+
         $endTime = new DateTime();
         $endTime->setTimezone(new DateTimeZone("UTC"));
 
@@ -78,7 +89,6 @@ class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSu
             'user_id' => $this->identifyUserId($request, $response),
             'company_id' => $this->identifyCompanyId($request, $response),
             'session_token' => $this->identifySessionToken($request, $response),
-            'company_id' => $this->identifyCompanyId($request, $response),
             'metadata' => $this->getMetadata($request, $response),
         ];
 
@@ -101,46 +111,74 @@ class MoesifSubscriber implements SymfonyEventSubscriberInterface, MoesifEventSu
 
     public function identifyUserId(Request $request, Response $response): ?string
     {
+
+        if ($this->configHooks) {
+          return $this->configHooks->identifyUserId($request, $response);
+        }
         return null;
     }
 
     public function identifyCompanyId(Request $request, Response $response): ?string
     {
+        if ($this->configHooks) {
+          return $this->configHooks->identifyCompanyId($request, $response);
+        }
         return null;
     }
 
     public function identifySessionToken(Request $request, Response $response): ?string
     {
+        if ($this->configHooks) {
+          return $this->configHooks->identifySessionToken($request, $response);
+        }
         return null;
     }
 
     public function getMetadata(Request $request, Response $response): ?array
     {
+        if ($this->configHooks) {
+          return $this->configHooks->getMetadata($request, $response);
+        }
         return null;
     }
 
     public function skip(Request $request, Response $response): bool
     {
+        if ($this->configHooks) {
+          return $this->configHooks->skip($request, $response);
+        }
         return false;
     }
 
     public function maskRequestHeaders(array $headers): array
     {
+        if ($this->configHooks) {
+          return $this->configHooks->maskRequestHeaders($headers);
+        }
         return $headers;
     }
 
     public function maskResponseHeaders(array $headers): array
     {
+        if ($this->configHooks) {
+          return $this->configHooks->maskResponseHeaders($headers);
+        }
         return $headers;
     }
 
-    public function maskRequestBody(string $body): ?string
+    public function maskRequestBody($body)
     {
+        if ($this->configHooks) {
+          return $this->configHooks->maskRequestBody($body);
+        }
         return $body;
     }
 
-    public function maskResponseBody(string $body): ?string
+    public function maskResponseBody($body)
     {
+        if ($this->configHooks) {
+          return $this->configHooks->maskResponseBody($body);
+        }
         return $body;
     }
 }

@@ -25,7 +25,7 @@ moesif:
     options:
         max_queue_size: 50
         max_batch_size: 25
-
+    hooks_class: 'App\Configuration\MyMoesifHooks'
 ```
 
 Your Moesif Application Id can be found in the [_Moesif Portal_](https://www.moesif.com/).
@@ -64,23 +64,29 @@ If set, will override the default max queue size before data is sent over to Moe
 Type: Int
 If set, will override the default max batch size that is sent over to Moesif. The default is `10`.
 
-## Subscriber Configuration Options
+#### __`hooks_class`__
 
-Certain functionalities can be overridden and customized within the plugin. To override these functions, within your projects `/src/EventSubscriber` directory, you must add a `CustomMoesifSubscriber.php` file. 
+Type: String
+Optional, if set, this should be your implementation of the `Moesif\MoesifBundle\Interfaces\MoesifHooksInterface`.
 
-In your `services.yaml` file you will also need to add the following:
-``` yaml
-services:
+## User Hook class Options
 
-    # Existing services config
-    ...
+Certain functionalities can be overridden and customized within the plugin with hooks.
 
-    App\EventSubscriber\CustomMoesifSubscriber:
-        class: App\EventSubscriber\CustomMoesifSubscriber # Ensure this matches the namespace and class name of your custom subscriber
-        tags:
-            - { name: moesif.event_subscriber }
+
+Within the `MyMoesifHooks.php` file, you will need to override the following methods:
+
+```php
+use Moesif\MoesifBundle\Interfaces\MoesifHooksInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class MyMoesifHooks implements MoesifHooksInterface {
+   // your implementation of every method below.
+}
 ```
-Within the `CustomMoesifSubscriber.php` file, you will need to override the following methods:
+
+The method you should implement is:
 
 ### __`identifyUserId`__
 
@@ -129,67 +135,73 @@ Optional, a function that takes a $request and $response and returns $metdata wh
 Type: `($request, $response) => String`
 Optional, a function that takes a $request and $response and returns true if this API call should be not be sent to Moesif.
 
-Here is an example of what the `CustomMoesifSubscriber.php` file may look like:
+Here is an example of what the `MyMoesifHooks.php` file may look like:
 
 ``` php
 <?php
 
-namespace App\EventSubscriber;
+namespace App\Configuration;
 
+use Moesif\MoesifBundle\Interfaces\MoesifHooksInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Moesif\MoesifBundle\Interfaces\EventSubscriberInterface as MoesifEventSubscriberInterface;
 
-class CustomMoesifSubscriber implements EventSubscriberInterface {
-    // Implement all abstract methods, but focus on the ones you want to override
-    public function identifyUserId(Request $request, Response $response): ?string {
-        // Your custom logic to identify the user
-        // For example, extract user ID from JWT token
-        return "1234abcd";
-    }
 
-    public function identifyCompanyId(Request $request, Response $response): ?string {
-        // Your custom logic to identify the company
-        // For example, extract company ID from request headers
-        return "5678efgh";
-    }
+class MyMoesifHooks implements MoesifHooksInterface {
 
-    public function identifySessionToken(Request $request, Response $response): ?string
-    {
-        return null;
-    }
+  public function __construct() {
+  }
 
-    public function getMetadata(Request $request, Response $response): ?array
-    {
-        return null;
-    }
+  public function identifyUserId(Request $request, Response $response): string|null
+  {
+    return 'nihao1';
+  }
 
-    public function skip(Request $request, Response $response): bool
-    {
-        return false;
-    }
+  public function identifyCompanyId(Request $request, Response $response): string|null
+  {
+    return $request->headers->get('X-Company-Id');
+  }
 
-    public function maskRequestHeaders(array $headers): array
-    {
-        return $headers;
-    }
+  public function identifySessionToken(Request $request, Response $response): string|null
+  {
+    return null;
+  }
 
-    public function maskResponseHeaders(array $headers): array
-    {
-        return $headers;
-    }
+  public function getMetadata(Request $request, Response $response): ?array
+  {
+      return null;
+  }
 
-    public function maskRequestBody(string $body): ?string
-    {
-        return $body;
-    }
+  public function skip(Request $request, Response $response): bool
+  {
+      return false;
+  }
 
-    public function maskResponseBody(string $body): ?string
-    {
-        return $body;
-    }
-    
+  public function maskRequestHeaders(array $headers): array
+  {
+      return $headers;
+  }
+
+  public function maskResponseHeaders(array $headers): array
+  {
+      return $headers;
+  }
+
+  public function maskRequestBody($body)
+  {
+      // this can be a string or array object.
+      // because prior to php 8, can not declare union type (such as string|array)
+      return $body;
+  }
+
+  public function maskResponseBody($body)
+  {
+      // this can be a string or array object.
+      // because prior to php 8, can not declare union type (such as string|array)
+      return $body;
+  }
 }
+
 ```
 
 ## Update a Single User

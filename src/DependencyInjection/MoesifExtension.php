@@ -7,6 +7,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\Definition;
 
 class MoesifExtension extends Extension
 {
@@ -31,6 +33,12 @@ class MoesifExtension extends Extension
         // Set parameters in the container from the configuration
         if (isset($config['moesif_application_id'])) {
             $container->setParameter('moesif.moesif_application_id', $config['moesif_application_id']);
+        }
+
+        if ($config['hooks_class']) {
+          $userMoesifConfigClass = $config['hooks_class'];
+          $definition = new Definition($userMoesifConfigClass);
+          $container->setDefinition('moesif.user_hooks', $definition);
         }
 
         if (isset($config['debug'])) {
