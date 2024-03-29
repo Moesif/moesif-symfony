@@ -168,11 +168,17 @@ class MoesifSubscriber implements SymfonyEventSubscriberInterface
 
     public function maskRequestBody($body)
     {
+        if ($this->configHooks) {
+          return $this->configHooks->maskRequestBody($body);
+        }
         return $body;
     }
 
     public function maskResponseBody($body)
     {
+        if ($this->configHooks) {
+          return $this->configHooks->maskResponseBody($body);
+        }
         return $body;
     }
 }
