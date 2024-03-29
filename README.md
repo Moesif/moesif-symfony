@@ -25,7 +25,7 @@ moesif:
     options:
         max_queue_size: 50
         max_batch_size: 25
-    user_hooks_class: 'App\Configuration\MyMoesifHooks'
+    hooks_class: 'App\Configuration\MyMoesifHooks'
 ```
 
 Your Moesif Application Id can be found in the [_Moesif Portal_](https://www.moesif.com/).
@@ -64,10 +64,10 @@ If set, will override the default max queue size before data is sent over to Moe
 Type: Int
 If set, will override the default max batch size that is sent over to Moesif. The default is `10`.
 
-#### __`user_hooks_class`__
+#### __`hooks_class`__
 
 Type: String
-Options, if set, this should be your implementation of the MoesifHooksInterface.
+Optional, if set, this should be your implementation of the `Moesif\MoesifBundle\Interfaces\MoesifHooksInterface`.
 
 ## User Hook class Options
 
@@ -86,6 +86,7 @@ class MyMoesifHooks implements MoesifHooksInterface {
 }
 ```
 
+The method you should implement is:
 
 ### __`identifyUserId`__
 

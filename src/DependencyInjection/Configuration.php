@@ -21,7 +21,7 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('debug')
                     ->defaultFalse()
                 ->end()
-                ->scalarNode('user_hooks_class')
+                ->scalarNode('hooks_class')
                     ->defaultValue('Moesif\MoesifBundle\Interfaces\MoesifDefaultHooks')
                 ->end()
                 ->arrayNode('options')

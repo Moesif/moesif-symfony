@@ -35,8 +35,8 @@ class MoesifExtension extends Extension
             $container->setParameter('moesif.moesif_application_id', $config['moesif_application_id']);
         }
 
-        if ($config['user_hooks_class']) {
-          $userMoesifConfigClass = $config['user_hooks_class'];
+        if ($config['hooks_class']) {
+          $userMoesifConfigClass = $config['hooks_class'];
           $definition = new Definition($userMoesifConfigClass);
           $container->setDefinition('moesif.user_hooks', $definition);
         }
