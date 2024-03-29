@@ -111,45 +111,67 @@ class MoesifSubscriber implements SymfonyEventSubscriberInterface
 
     public function identifyUserId(Request $request, Response $response): ?string
     {
+
+        if ($this->configHooks) {
+          return $this->configHooks->identifyUserId($request, $response);
+        }
         return null;
     }
 
     public function identifyCompanyId(Request $request, Response $response): ?string
     {
+        if ($this->configHooks) {
+          return $this->configHooks->identifyCompanyId($request, $response);
+        }
         return null;
     }
 
     public function identifySessionToken(Request $request, Response $response): ?string
     {
+        if ($this->configHooks) {
+          return $this->configHooks->identifySessionToken($request, $response);
+        }
         return null;
     }
 
     public function getMetadata(Request $request, Response $response): ?array
     {
+        if ($this->configHooks) {
+          return $this->configHooks->getMetadata($request, $response);
+        }
         return null;
     }
 
     public function skip(Request $request, Response $response): bool
     {
+        if ($this->configHooks) {
+          return $this->configHooks->skip($request, $response);
+        }
         return false;
     }
 
     public function maskRequestHeaders(array $headers): array
     {
+        if ($this->configHooks) {
+          return $this->configHooks->maskRequestHeaders($headers);
+        }
         return $headers;
     }
 
     public function maskResponseHeaders(array $headers): array
     {
+        if ($this->configHooks) {
+          return $this->configHooks->maskResponseHeaders($headers);
+        }
         return $headers;
     }
 
-    public function maskRequestBody(string $body): ?string
+    public function maskRequestBody($body)
     {
         return $body;
     }
 
-    public function maskResponseBody(string $body): ?string
+    public function maskResponseBody($body)
     {
         return $body;
     }

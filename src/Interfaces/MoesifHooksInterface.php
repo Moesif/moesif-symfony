@@ -13,6 +13,6 @@ interface MoesifHooksInterface {
     public function skip(Request $request, Response $response): bool;
     public function maskRequestHeaders(array $headers): array;
     public function maskResponseHeaders(array $headers): array;
-    public function maskRequestBody(string $body): ?string;
-    public function maskResponseBody(string $body): ?string;
+    public function maskRequestBody($body);
+    public function maskResponseBody($body);
 }
