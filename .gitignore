@@ -1,3 +1,9 @@
+###> IDE ###
+.idea/
+.vscode/
+.metals/
+.debug/
+.DS_Store
 
 ###> symfony/framework-bundle ###
 /.env.local
