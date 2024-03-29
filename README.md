@@ -186,13 +186,17 @@ class MyMoesifHooks implements MoesifHooksInterface {
       return $headers;
   }
 
-  public function maskRequestBody(string $body): ?string
+  public function maskRequestBody($body)
   {
+      // this can be a string or array object.
+      // because prior to php 8, can not declare union type (such as string|array)
       return $body;
   }
 
-  public function maskResponseBody(string $body): ?string
+  public function maskResponseBody($body)
   {
+      // this can be a string or array object.
+      // because prior to php 8, can not declare union type (such as string|array)
       return $body;
   }
 }
