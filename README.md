@@ -1,7 +1,7 @@
 # Moesif Symfony SDK Documentation
 by [Moesif](https://moesif.com), the [API analytics](https://www.moesif.com/features/api-analytics) and [API monetization](https://www.moesif.com/solutions/metered-api-billing) platform.
 
-[Moesif's official SDK for PHP Symfony](https://github.com/Moesif/moesif-symfony) allows you to automatically capture API traffic and send to the [Moesif API Analytics]({{site.baseurl}}/api-analytics) platform.
+[Moesif's official SDK for PHP Symfony](https://github.com/Moesif/moesif-symfony) allows you to automatically capture API traffic and send to the [Moesif API Analytics](https://www.moesif.com/docs/api-analytics/) platform.
 
 > If you're new to Moesif, see [our Getting Started](https://www.moesif.com/docs/) resources to quickly get up and running.
 
